@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沙结智汇云 - 首页</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">沙结智汇云</div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+  <div class="nav-links">
+    <a href="index.html" class="active">首页</a>
+    <a href="assess.html">选址评估</a>
+    <a href="monitor.html">培育监测</a>
+    <a href="history.html">历史数据</a>
+    <a href="knowledge.html">知识库</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">项目仪表盘</h1>
+
+  <!-- 统计卡片 -->
+  <div class="stat-grid" id="statGrid">
+    <div class="stat-card">
+      <div class="stat-value" id="totalProjects">-</div>
+      <div class="stat-label">项目总数</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-value" id="greenCount">-</div>
+      <div class="stat-label">适宜项目</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-value" id="yellowCount">-</div>
+      <div class="stat-label">有条件推荐</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-value" id="redCount">-</div>
+      <div class="stat-label">不推荐</div>
+    </div>
+  </div>
+
+  <!-- 告警列表 -->
+  <div class="card">
+    <div class="card-title">最新告警</div>
+    <div id="alertList">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <!-- 最新评估记录 -->
+  <div class="card">
+    <div class="card-title">最新评估记录</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>项目名称</th>
+            <th>判定结果</th>
+            <th>超标项数</th>
+            <th>评估时间</th>
+          </tr>
+        </thead>
+        <tbody id="recentAssessments">
+          <tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script>
+(async function() {
+  try {
+    const r = await loadDashboard();
+    if (!r || !r.data) return;
+    const d = r.data;
+
+    document.getElementById('totalProjects').textContent = d.totalProjects || 0;
+    document.getElementById('greenCount').textContent = d.greenCount || 0;
+    document.getElementById('yellowCount').textContent = d.yellowCount || 0;
+    document.getElementById('redCount').textContent = d.redCount || 0;
+
+    // 告警列表
+    const alertDiv = document.getElementById('alertList');
+    if (d.latestAlerts && d.latestAlerts.length > 0) {
+      alertDiv.innerHTML = d.latestAlerts.map(a =>
+        '<div class="alert-item ' + a.level + '">' +
+        '<div class="alert-icon">' + (a.level === 'red' ? '!' : '?') + '</div>' +
+        '<div class="alert-content">' +
+        '<strong>' + a.project_name + '</strong> - ' + a.indicator + ': ' + a.message +
+        '<div class="alert-time">' + formatDateTime(a.created_at) + '</div>' +
+        '</div></div>'
+      ).join('');
+    } else {
+      alertDiv.innerHTML = '<div class="empty"><div class="empty-icon">-</div><p>暂无告警</p></div>';
+    }
+
+    // 最新评估
+    const tbody = document.getElementById('recentAssessments');
+    if (d.latestAssessments && d.latestAssessments.length > 0) {
+      tbody.innerHTML = d.latestAssessments.map(a =>
+        '<tr>' +
+        '<td>' + (a.project_name || '项目#' + a.project_id) + '</td>' +
+        '<td>' + getTagHtml(a.result) + '</td>' +
+        '<td>' + (a.score || 0) + '</td>' +
+        '<td>' + formatDate(a.created_at) + '</td>' +
+        '</tr>'
+      ).join('');
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4"><div class="empty">暂无评估记录，请先<a href="assess.html">创建项目评估</a></div></td></tr>';
+    }
+  } catch (e) {
+    console.error('Dashboard load error:', e);
+  }
+})();
+</script>
+
+</body>
+</html>

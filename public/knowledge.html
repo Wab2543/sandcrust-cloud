@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沙结智汇云 - 知识库</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">沙结智汇云</div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="assess.html">选址评估</a>
+    <a href="monitor.html">培育监测</a>
+    <a href="history.html">历史数据</a>
+    <a href="knowledge.html" class="active">知识库</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">知识库：关键阈值速查</h1>
+  <p class="page-subtitle">以下数据来源于已有科研文献，系统内置的规则引擎基于此进行自动判定。</p>
+
+  <!-- 第一层 -->
+  <div class="card">
+    <div class="card-title">第一层：场地适宜性评估 —— 10项因子阈值</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+      数据来源：张鑫钰等. 中国旱区生物土壤结皮分布格局及限制因素. 生态学报, 2026.
+      基于全国462个分布点的Biomod2集成模型（TSS=0.801, AUC=0.965）.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>序号</th><th>评估因子</th><th>单位</th><th>非适生阈值</th><th>最适区间</th><th>综合判定</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>年降水量</td><td>mm</td><td class="tag-red">&lt;85</td><td>200（最适）；85~400可生存</td><td>&lt;85mm极端干旱区判为非适生</td></tr>
+          <tr><td>2</td><td>年平均气温</td><td>C</td><td class="tag-red">&lt;-2.2</td><td>7.4（最适）</td><td>&lt;-2.2C高寒限制</td></tr>
+          <tr><td>3</td><td>降水量季节性变化</td><td>mm</td><td class="tag-red">&gt;126.6</td><td>100（最适）</td><td>&gt;126.6mm降水集中需配套保水措施</td></tr>
+          <tr><td>4</td><td>土壤全氮含量</td><td>g/kg</td><td class="tag-red">&gt;2.58</td><td>0.41（最适）</td><td>&gt;2.58g/kg肥力过高竞争激烈</td></tr>
+          <tr><td>5</td><td>土壤全磷含量</td><td>g/kg</td><td class="tag-red">&gt;0.56</td><td>0.38~0.56</td><td>&gt;0.56g/kg磷过高抑制结皮</td></tr>
+          <tr><td>6</td><td>土壤砾石含量</td><td>%</td><td class="tag-red">&gt;18.4</td><td>&lt;7.3（最适）；7.3~18.4可生存</td><td>&gt;18.4%藻丝体难附着</td></tr>
+          <tr><td>7</td><td>海拔</td><td>m</td><td class="tag-red">&gt;3840</td><td>1955（最适）</td><td>&gt;3840m高海拔低温强辐射</td></tr>
+          <tr><td>8</td><td>盐渍化状况</td><td>分类</td><td class="tag-red">盐壳区/盐碱土重度</td><td>非盐渍化或轻度盐碱</td><td>盐壳区直接判为非适生；盐碱土重叠仅5.47%</td></tr>
+          <tr><td>9</td><td>大风日数</td><td>d/年</td><td class="tag-red">&gt;=50</td><td>&lt;50</td><td>&gt;=50d/年结皮破碎剥离</td></tr>
+          <tr><td>10</td><td>植被盖度</td><td>%</td><td class="tag-red">&gt;40</td><td>&lt;40</td><td>&gt;40%高等植物竞争</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:16px;padding:12px;background:var(--bg);border-radius:6px;font-size:14px">
+      <strong>综合判定逻辑：</strong><br>
+      -- 所有10项均达标 -> 绿色（优先推荐）<br>
+      -- 1~2项超出非适生阈值 -> 黄色（有条件推荐，需配套辅助措施）<br>
+      -- &gt;=3项超出非适生阈值 -> 红色（不推荐，建议放弃或寻找微生境）<br>
+      <span style="color:var(--text-secondary);font-size:12px">适生区约13.19x10^5 km2，占中国旱区总面积的32.42%</span>
+    </div>
+  </div>
+
+  <!-- 第二层 -->
+  <div class="card">
+    <div class="card-title">第二层：培育过程监测 —— 核心指标参考</div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+      数据来源：康红梅等. 一种蓝藻、沙蒿胶及微生物菌剂联合固沙新方法研究. 环境生态学, 2025.
+      藻种配比MV:SJ:PT=10:1:5，添加0.1%沙蒿胶及枯草芽孢杆菌(BS)或胶质芽孢杆菌(BM).
+    </p>
+
+    <!-- 操作参数 -->
+    <div class="form-section">
+      <div class="form-section-title">操作管理参数（固定值）</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>参数</th><th>推荐值</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>藻种配比</td><td><strong>MV:SJ:PT = 10:1:5</strong>（鲜重比）</td><td>MV固沙最强；SJ抗紫外但比例过高降强度；PT补下层。不建议改动</td></tr>
+            <tr><td>ASKG浓度</td><td><strong>0.1%</strong></td><td>短期(32d)降硬度27%利于种子萌发；长期(60d)硬度反超最高。避开发芽季节使用</td></tr>
+            <tr><td>菌剂类型</td><td><strong>BS</strong>（枯草芽孢杆菌）优先；次选<strong>BM</strong>（胶质芽孢杆菌）</td><td>目标防蚀选BS（风蚀率0.45）；目标增氮选BM（全氮0.15）；混合无协同作用选1种即可</td></tr>
+            <tr><td>菌剂添加量</td><td><strong>1.0 g/kg</strong>基质（单一菌种）</td><td>混合各0.5 g/kg，严格按此用量</td></tr>
+            <tr><td>接种液喷洒量</td><td><strong>2 L/m2</strong></td><td>固定操作参数</td></tr>
+            <tr><td>沙壤初始容重</td><td><strong>1.54 g/cm3</strong></td><td>固定实验条件</td></tr>
+            <tr><td>光照条件</td><td><strong>25C, 2000~3000 Lx, 8 h/d</strong></td><td>BG11液体培养基，每周补1次营养液</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 结皮生长指标 -->
+    <div class="form-section">
+      <div class="form-section-title">结皮生长核心指标（32d和60d实测值）</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>指标</th><th>单位</th><th>32d正常范围</th><th>60d正常范围</th><th>最优实测值</th></tr></thead>
+          <tbody>
+            <tr><td>结皮厚度</td><td>mm</td><td>1.92~2.28</td><td>1.58~3.58</td><td>处理5最厚，比处理2高53.6%</td></tr>
+            <tr><td>生物量Chl-a</td><td>ug/cm2</td><td>仅藻液0.17</td><td>仅藻液0.21；+ASKG 0.35</td><td>添加菌剂显著>0.35</td></tr>
+            <tr><td>抗压强度</td><td>kg/cm2</td><td>添加菌剂比CK高约40%</td><td>最高0.42 (Cy+ASKG)</td><td>ASKG短期降27%但60d反超</td></tr>
+            <tr><td>风蚀率</td><td>g/(m2.min)</td><td>0.47~1.93</td><td>最优0.45 (Cy+ASKG+BS)</td><td>次优0.59 (Cy+ASKG+BM)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 土壤改良效果 -->
+    <div class="form-section">
+      <div class="form-section-title">土壤养分改良效果（60d实测值）</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>指标</th><th>单位</th><th>CK背景值</th><th>60d处理范围</th><th>最优处理</th></tr></thead>
+          <tbody>
+            <tr><td>土壤有机质</td><td>g/kg</td><td>4.05~4.21</td><td>10.35~15.93</td><td>处理5: 15.93，比对照增约294%</td></tr>
+            <tr><td>土壤全氮</td><td>g/kg</td><td>0.06~0.07</td><td>0.10~0.15</td><td>处理3: 0.15，比对照增约114%</td></tr>
+            <tr><td>土壤全磷</td><td>g/kg</td><td>0.11~0.12</td><td>0.10~0.14</td><td>各处理与CK差异不大</td></tr>
+            <tr><td>土壤全钾</td><td>g/kg</td><td>15.10~15.90</td><td>14.90~17.30</td><td>沙土富钾，常规记录即可</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 数据来源 -->
+  <div class="card" style="font-size:13px;color:var(--text-secondary)">
+    <strong>参考文献：</strong><br>
+    [1] 张鑫钰, 何萍, 徐杰. 中国旱区生物土壤结皮分布格局及限制因素[J]. 生态学报, 2026, 46(10): 5559-5570.<br>
+    [2] 康红梅, 刘金鹏, 张军, 李鑫. 一种蓝藻、沙蒿胶及微生物菌剂联合固沙新方法研究[J]. 环境生态学, 2025, 7(9): 153-157.
+  </div>
+</div>
+
+</body>
+</html>

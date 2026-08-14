@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沙结智汇云 - 培育监测</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">沙结智汇云</div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="assess.html">选址评估</a>
+    <a href="monitor.html" class="active">培育监测</a>
+    <a href="history.html">历史数据</a>
+    <a href="knowledge.html">知识库</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">第二层：培育过程监测</h1>
+  <p class="page-subtitle">跟踪已落地项目的培育过程（0~60d），按五大模块录入监测数据，系统自动比对阈值并标记异常。</p>
+
+  <!-- 项目选择 -->
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>选择项目</label>
+        <select id="projectSelect"><option value="">-- 请选择 --</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab切换 -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('env')">模块一：环境条件</button>
+    <button class="tab-btn" onclick="switchTab('crust')">模块二：结皮生长</button>
+    <button class="tab-btn" onclick="switchTab('soil')">模块三：土壤养分</button>
+    <button class="tab-btn" onclick="switchTab('ops')">模块四：操作管理</button>
+    <button class="tab-btn" onclick="switchTab('carbon')">模块五：碳汇监测</button>
+  </div>
+
+  <!-- Tab内容 -->
+  <div class="card">
+    <!-- 模块一：环境条件 -->
+    <div class="tab-panel active" id="tab-env">
+      <div class="card-title">模块一：环境培育条件（现场管控）</div>
+      <div class="form-row">
+        <div class="form-group"><label>培育温度 <span class="unit">C</span></label><input type="number" id="env_temp" step="0.1" placeholder="最适25"></div>
+        <div class="form-group"><label>光照强度 <span class="unit">Lx</span></label><input type="number" id="env_light_intensity" step="1" placeholder="2000~12000"></div>
+        <div class="form-group"><label>光照时长 <span class="unit">h/d</span></label><input type="number" id="env_light_hours" step="0.1" placeholder="8"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>土壤含水量 <span class="unit">%</span></label><input type="number" id="env_soil_water" step="0.1" placeholder="最适10"></div>
+        <div class="form-group"><label>补水量 <span class="unit">L/m2/d</span></label><input type="number" id="env_water_amount" step="0.1" placeholder="3~4"></div>
+        <div class="form-group"><label>空气相对湿度 <span class="unit">%RH</span></label><input type="number" id="env_humidity" step="0.1" placeholder="80~90"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>营养液添加 <span class="unit">次/周</span></label><input type="number" id="env_nutrient_freq" step="1" placeholder="1"></div>
+        <div class="form-group"><label>养护时长 <span class="unit">天</span></label><input type="number" id="env_period_days" step="1" placeholder="32"></div>
+      </div>
+      <div class="form-group"><label>备注</label><input type="text" id="env_notes" placeholder="可选"></div>
+      <button class="btn btn-primary btn-block" onclick="submitMonitor('env')">提交环境数据</button>
+      <div id="envResult" style="margin-top:12px"></div>
+    </div>
+
+    <!-- 模块二：结皮生长 -->
+    <div class="tab-panel" id="tab-crust">
+      <div class="card-title">模块二：结皮生长状况（核心效果指标）</div>
+      <div class="form-row">
+        <div class="form-group"><label>结皮盖度 <span class="unit">%</span></label><input type="number" id="crust_coverage" step="0.1" placeholder="40~80"></div>
+        <div class="form-group"><label>结皮厚度 <span class="unit">mm</span></label><input type="number" id="crust_thickness" step="0.01" placeholder="1.92~3.58"></div>
+        <div class="form-group"><label>生物量Chl-a <span class="unit">ug/cm2</span></label><input type="number" id="crust_chl_a" step="0.01" placeholder="0.17~0.50"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>抗压强度 <span class="unit">kg/cm2</span></label><input type="number" id="crust_compressive_strength" step="0.01" placeholder="最高0.42"></div>
+        <div class="form-group"><label>风蚀率 <span class="unit">g/(m2/min)</span></label><input type="number" id="crust_wind_erosion_rate" step="0.01" placeholder="最优0.45"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>表面粗糙度</label><select id="crust_roughness"><option value="">-- 选择 --</option><option value="光滑平坦">光滑平坦</option><option value="轻微龟裂">轻微龟裂</option><option value="明显龟裂褶皱">明显龟裂褶皱</option></select></div>
+        <div class="form-group"><label>结皮颜色/类型</label><select id="crust_color"><option value="">-- 选择 --</option><option value="浅绿/黄褐">浅绿/黄褐色（藻结皮）</option><option value="深绿">深绿色</option><option value="黑褐">黑褐色（成熟）</option><option value="发白干裂">发白干裂</option></select></div>
+      </div>
+      <div class="form-group"><label>备注</label><input type="text" id="crust_notes" placeholder="可选"></div>
+      <button class="btn btn-primary btn-block" onclick="submitMonitor('crust')">提交结皮数据</button>
+      <div id="crustResult" style="margin-top:12px"></div>
+    </div>
+
+    <!-- 模块三：土壤养分 -->
+    <div class="tab-panel" id="tab-soil">
+      <div class="card-title">模块三：土壤养分改良（效果评估）</div>
+      <div class="form-row">
+        <div class="form-group"><label>土壤有机质 <span class="unit">g/kg</span></label><input type="number" id="soil_organic_matter" step="0.01" placeholder="最高15.93"></div>
+        <div class="form-group"><label>土壤全氮 <span class="unit">g/kg</span></label><input type="number" id="soil_total_n" step="0.01" placeholder="最高0.15"></div>
+        <div class="form-group"><label>土壤全磷 <span class="unit">g/kg</span></label><input type="number" id="soil_total_p" step="0.01" placeholder="0.10~0.14"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>土壤全钾 <span class="unit">g/kg</span></label><input type="number" id="soil_total_k" step="0.01" placeholder="14.90~17.30"></div>
+        <div class="form-group"><label>土壤pH</label><input type="number" id="soil_ph" step="0.1" placeholder="7.0~8.5"></div>
+        <div class="form-group"><label>细物质含量 <span class="unit">%</span></label><input type="number" id="soil_fine_matter" step="0.1" placeholder=">=15~20"></div>
+      </div>
+      <div class="form-group"><label>备注</label><input type="text" id="soil_notes" placeholder="可选"></div>
+      <button class="btn btn-primary btn-block" onclick="submitMonitor('soil')">提交土壤数据</button>
+      <div id="soilResult" style="margin-top:12px"></div>
+    </div>
+
+    <!-- 模块四：操作管理 -->
+    <div class="tab-panel" id="tab-ops">
+      <div class="card-title">模块四：操作管理记录（实验/工程参数）</div>
+      <div class="form-row">
+        <div class="form-group"><label>藻种配比</label><input type="text" id="ops_algae_ratio" value="MV:SJ:PT=10:1:5" placeholder="MV:SJ:PT=10:1:5"></div>
+        <div class="form-group"><label>ASKG浓度 <span class="unit">%</span></label><input type="number" id="ops_askg_concentration" step="0.01" value="0.1" placeholder="0.1"></div>
+        <div class="form-group"><label>菌剂类型</label><select id="ops_bacteria_type"><option value="">-- 选择 --</option><option value="BS">BS（枯草芽孢杆菌）</option><option value="BM">BM（胶质芽孢杆菌）</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>菌剂添加量 <span class="unit">g/kg</span></label><input type="number" id="ops_bacteria_amount" step="0.1" value="1.0" placeholder="1.0"></div>
+        <div class="form-group"><label>接种液喷洒量 <span class="unit">L/m2</span></label><input type="number" id="ops_inoculum_amount" step="0.1" value="2" placeholder="2"></div>
+        <div class="form-group"><label>沙壤初始容重 <span class="unit">g/cm3</span></label><input type="number" id="ops_soil_bulk_density" step="0.01" value="1.54" placeholder="1.54"></div>
+      </div>
+      <div class="form-group"><label>备注</label><input type="text" id="ops_notes" placeholder="可选"></div>
+      <button class="btn btn-primary btn-block" onclick="submitMonitor('ops')">提交操作参数</button>
+      <div id="opsResult" style="margin-top:12px"></div>
+    </div>
+
+    <!-- 模块五：碳汇监测 -->
+    <div class="tab-panel" id="tab-carbon">
+      <div class="card-title">模块五：碳汇监测（可选拓展）</div>
+      <div class="form-row">
+        <div class="form-group"><label>净光合速率 <span class="unit">umol/(m2/s)</span></label><input type="number" id="carbon_photosynthesis_rate" step="0.01" placeholder="需>0"></div>
+        <div class="form-group"><label>土壤呼吸速率 <span class="unit">umol/(m2/s)</span></label><input type="number" id="carbon_soil_respiration" step="0.01" placeholder="需低于光合"></div>
+      </div>
+      <div class="form-group"><label>备注</label><input type="text" id="carbon_notes" placeholder="可选"></div>
+      <button class="btn btn-primary btn-block" onclick="submitMonitor('carbon')">提交碳汇数据</button>
+      <div id="carbonResult" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script>
+let currentTab = 'env';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab-btn[onclick*="' + tab + '"]').classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+async function loadProjectsForMonitor() {
+  try {
+    const projects = await loadProjects();
+    const sel = document.getElementById('projectSelect');
+    projects.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name + (p.location ? ' (' + p.location + ')' : '');
+      sel.appendChild(opt);
+    });
+  } catch (e) {}
+}
+
+function getFieldValue(prefix, field) {
+  const el = document.getElementById(prefix + '_' + field);
+  if (!el) return null;
+  const v = el.value;
+  if (v === '' || v === null || v === undefined) return null;
+  if (el.type === 'number') {
+    const n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  }
+  return v;
+}
+
+async function submitMonitor(module) {
+  const projectId = document.getElementById('projectSelect').value;
+  if (!projectId) {
+    showToast('请先选择项目', 'error');
+    return;
+  }
+
+  const fieldMaps = {
+    env: ['temp','light_intensity','light_hours','soil_water','water_amount','humidity','nutrient_freq','period_days','notes'],
+    crust: ['coverage','thickness','chl_a','compressive_strength','wind_erosion_rate','roughness','crust_color','notes'],
+    soil: ['organic_matter','total_n','total_p','total_k','ph','fine_matter','notes'],
+    ops: ['algae_ratio','askg_concentration','bacteria_type','bacteria_amount','inoculum_amount','soil_bulk_density','notes'],
+    carbon: ['photosynthesis_rate','soil_respiration','notes']
+  };
+
+  const data = { project_id: parseInt(projectId), module: module };
+  for (const f of fieldMaps[module]) {
+    data[f] = getFieldValue(module, f);
+  }
+
+  try {
+    const r = await apiPost('/monitor', data);
+    const checks = r.data.checks;
+    const resultDiv = document.getElementById(module + 'Result');
+
+    if (checks && checks.alerts && checks.alerts.length > 0) {
+      resultDiv.innerHTML = checks.alerts.map(a =>
+        '<div class="alert-item ' + a.level + '" style="margin-top:8px">' +
+        '<div class="alert-icon">' + (a.level === 'red' ? '!' : '?') + '</div>' +
+        '<div class="alert-content"><strong>' + a.name + '</strong>: ' + a.suggestion + '</div></div>'
+      ).join('');
+    } else {
+      resultDiv.innerHTML = '<div style="padding:8px;color:var(--green);font-weight:500">所有指标正常</div>';
+    }
+
+    showToast('数据已保存');
+  } catch (e) {}
+}
+
+loadProjectsForMonitor();
+</script>
+
+</body>
+</html>

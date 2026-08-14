@@ -1,0 +1,15 @@
+{
+  "name": "sandcrust-cloud",
+  "version": "1.0.0",
+  "description": "沙结智汇云 - 基于AIoT的生物结皮荒漠治理与碳汇管理数字化平台",
+  "main": "src/worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate": "wrangler d1 execute sandcrust-db --file=schema.sql",
+    "db:seed": "wrangler d1 execute sandcrust-db --file=seed.sql"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}

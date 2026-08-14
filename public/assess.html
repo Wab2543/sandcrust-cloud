@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沙结智汇云 - 选址评估</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">沙结智汇云</div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="assess.html" class="active">选址评估</a>
+    <a href="monitor.html">培育监测</a>
+    <a href="history.html">历史数据</a>
+    <a href="knowledge.html">知识库</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">第一层：场地适宜性评估</h1>
+  <p class="page-subtitle">判断目标区域是否具备开展生物结皮固沙工程的基本条件。填写10项环境因子，系统将基于科研阈值自动判定。</p>
+
+  <!-- 项目基本信息 -->
+  <div class="card" id="projectSection">
+    <div class="card-title">项目信息</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>项目名称</label>
+        <input type="text" id="projectName" placeholder="如：腾格里沙漠南缘试验区">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>项目位置（中国）</label>
+      <div class="form-row">
+        <div class="form-group">
+          <select id="projectProvince" onchange="onProvinceChange()">
+            <option value="">-- 选择省/自治区/直辖市 --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select id="projectCity" onchange="onCityChange()">
+            <option value="">-- 选择市/区 --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="text" id="projectCounty" placeholder="县/旗/区（可选填）">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>已有项目</label>
+      <select id="existingProject" onchange="onSelectProject()">
+        <option value="">-- 新项目（填写上方信息）--</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- 10项评估因子 -->
+  <div class="card" id="assessForm">
+    <div class="card-title">环境评估因子（共10项）</div>
+
+    <div class="form-section">
+      <div class="form-section-title">一、气候因子</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>年降水量 <span class="unit">mm</span></label>
+          <input type="number" id="annual_precip" step="0.1" placeholder="如 200">
+        </div>
+        <div class="form-group">
+          <label>年平均气温 <span class="unit">C</span></label>
+          <input type="number" id="annual_temp" step="0.1" placeholder="如 7.4">
+        </div>
+        <div class="form-group">
+          <label>降水量季节性变化 <span class="unit">mm</span></label>
+          <input type="number" id="precip_seasonality" step="0.1" placeholder="如 100">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">二、土壤因子</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>土壤全氮含量 <span class="unit">g/kg</span></label>
+          <input type="number" id="soil_total_n" step="0.01" placeholder="如 0.41">
+        </div>
+        <div class="form-group">
+          <label>土壤全磷含量 <span class="unit">g/kg</span></label>
+          <input type="number" id="soil_total_p" step="0.01" placeholder="如 0.45">
+        </div>
+        <div class="form-group">
+          <label>土壤砾石含量 <span class="unit">%</span></label>
+          <input type="number" id="gravel_content" step="0.1" placeholder="如 5">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">三、地形与特殊因子</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>海拔 <span class="unit">m</span></label>
+          <input type="number" id="elevation" step="1" placeholder="如 2000">
+        </div>
+        <div class="form-group">
+          <label>盐渍化状况</label>
+          <select id="salinization">
+            <option value="">-- 请选择 --</option>
+            <option value="非盐渍化">非盐渍化</option>
+            <option value="轻度盐碱">轻度盐碱</option>
+            <option value="中度盐碱">中度盐碱</option>
+            <option value="盐碱土重度">盐碱土/重度</option>
+            <option value="盐壳区">盐壳区</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>大风日数 <span class="unit">d/年</span></label>
+          <input type="number" id="wind_days" step="1" placeholder="如 20">
+        </div>
+        <div class="form-group">
+          <label>植被盖度 <span class="unit">%</span></label>
+          <input type="number" id="vegetation_cover" step="0.1" placeholder="如 20">
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" onclick="submitAssess()" style="margin-top:16px">提交评估</button>
+  </div>
+
+  <!-- 历史评估 -->
+  <div class="card">
+    <div class="card-title">评估历史</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>项目名称</th>
+            <th>判定</th>
+            <th>超标项</th>
+            <th>时间</th>
+          </tr>
+        </thead>
+        <tbody id="historyTable">
+          <tr><td colspan="4"><div class="empty">暂无记录</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 结果弹窗 -->
+<div class="modal-overlay" id="resultModal">
+  <div class="modal">
+    <h3>评估结果</h3>
+    <div class="result-badge" id="resultBadge"></div>
+    <p id="resultSummary" style="text-align:center;font-size:15px;margin:8px 0"></p>
+    <div class="result-detail" id="resultDetail"></div>
+    <button class="btn btn-outline btn-close" onclick="closeModal()">关闭</button>
+  </div>
+</div>
+
+<script src="js/china-regions.js"></script>
+<script src="js/utils.js"></script>
+<script>
+// 初始化省份下拉框
+initProvinceSelect(document.getElementById('projectProvince'));
+
+function onProvinceChange() {
+  updateCitySelect(
+    document.getElementById('projectProvince'),
+    document.getElementById('projectCity'),
+    document.getElementById('projectCounty')
+  );
+}
+
+function onCityChange() {
+  // 市级变更时清空区县输入
+  document.getElementById('projectCounty').value = '';
+}
+
+async function loadProjectsForSelect() {
+  try {
+    const projects = await loadProjects();
+    const sel = document.getElementById('existingProject');
+    projects.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name + (p.location ? ' (' + p.location + ')' : '');
+      sel.appendChild(opt);
+    });
+  } catch (e) {}
+}
+
+function onSelectProject() {
+  const id = document.getElementById('existingProject').value;
+  const disabled = !!id;
+  document.getElementById('projectName').disabled = disabled;
+  document.getElementById('projectProvince').disabled = disabled;
+  document.getElementById('projectCity').disabled = disabled;
+  document.getElementById('projectCounty').disabled = disabled;
+}
+
+async function submitAssess() {
+  const projectName = document.getElementById('projectName').value.trim();
+  const existingId = document.getElementById('existingProject').value;
+
+  // 计算项目位置
+  const projectLocation = getLocationString(
+    document.getElementById('projectProvince'),
+    document.getElementById('projectCity'),
+    document.getElementById('projectCounty')
+  );
+
+  let projectId = existingId ? parseInt(existingId) : null;
+
+  if (!projectId && !projectName) {
+    showToast('请填写项目名称或选择已有项目', 'error');
+    return;
+  }
+
+  if (!projectId && !projectLocation) {
+    showToast('请选择项目所在省份', 'error');
+    return;
+  }
+
+  // 创建新项目
+  if (!projectId) {
+    try {
+      const r = await apiPost('/projects', { name: projectName, location: projectLocation });
+      projectId = r.data.id;
+    } catch (e) {
+      return;
+    }
+  }
+
+  // 收集表单数据
+  const data = {
+    project_id: projectId,
+    annual_precip: parseFloat(document.getElementById('annual_precip').value),
+    annual_temp: parseFloat(document.getElementById('annual_temp').value),
+    precip_seasonality: parseFloat(document.getElementById('precip_seasonality').value),
+    soil_total_n: parseFloat(document.getElementById('soil_total_n').value),
+    soil_total_p: parseFloat(document.getElementById('soil_total_p').value),
+    gravel_content: parseFloat(document.getElementById('gravel_content').value),
+    elevation: parseFloat(document.getElementById('elevation').value),
+    salinization: document.getElementById('salinization').value,
+    wind_days: parseFloat(document.getElementById('wind_days').value),
+    vegetation_cover: parseFloat(document.getElementById('vegetation_cover').value)
+  };
+
+  // 基本校验
+  if (isNaN(data.annual_precip) || isNaN(data.annual_temp)) {
+    showToast('请至少填写年降水量和年平均气温', 'error');
+    return;
+  }
+
+  try {
+    const r = await apiPost('/projects/assess', data);
+    const result = r.data;
+    showResult(result);
+    loadHistory();
+  } catch (e) {}
+}
+
+function showResult(result) {
+  const badge = document.getElementById('resultBadge');
+  const cls = 'r-' + result.level;
+  const texts = { green: '绿色 优先推荐', yellow: '黄色 有条件推荐', red: '红色 不推荐' };
+
+  badge.innerHTML = '<span class="' + cls + '">' + (texts[result.level] || result.level) + '</span>';
+  document.getElementById('resultSummary').textContent = result.summary;
+
+  let detailHtml = '';
+  if (result.details && result.details.length > 0) {
+    detailHtml += '<table><thead><tr><th>因子</th><th>数值</th><th>判定</th><th>建议</th></tr></thead><tbody>';
+    result.details.forEach(d => {
+      detailHtml += '<tr>' +
+        '<td>' + d.name + '</td>' +
+        '<td>' + d.value + (d.unit ? ' ' + d.unit : '') + '</td>' +
+        '<td>' + getTagHtml(d.level) + '</td>' +
+        '<td style="font-size:13px">' + d.suggestion + '</td>' +
+        '</tr>';
+    });
+    detailHtml += '</tbody></table>';
+  }
+  document.getElementById('resultDetail').innerHTML = detailHtml;
+  document.getElementById('resultModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('resultModal').classList.remove('show');
+}
+
+async function loadHistory() {
+  try {
+    const r = await apiGet('/projects/assess');
+    const data = r.data || [];
+    const tbody = document.getElementById('historyTable');
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4"><div class="empty">暂无记录</div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.slice(0, 15).map(a =>
+      '<tr>' +
+      '<td>' + (a.project_name || '项目#' + a.project_id) + '</td>' +
+      '<td>' + getTagHtml(a.result) + '</td>' +
+      '<td>' + (a.score || 0) + '</td>' +
+      '<td>' + formatDate(a.created_at) + '</td>' +
+      '</tr>'
+    ).join('');
+  } catch (e) {}
+}
+
+// 初始化
+loadProjectsForSelect();
+loadHistory();
+</script>
+
+</body>
+</html>

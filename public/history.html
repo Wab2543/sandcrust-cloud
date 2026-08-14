@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>沙结智汇云 - 历史数据</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="logo">沙结智汇云</div>
+  <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">&#9776;</button>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="assess.html">选址评估</a>
+    <a href="monitor.html">培育监测</a>
+    <a href="history.html" class="active">历史数据</a>
+    <a href="knowledge.html">知识库</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 class="page-title">历史数据查询</h1>
+
+  <!-- 筛选条件 -->
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>项目</label>
+        <select id="filterProject"><option value="">全部</option></select>
+      </div>
+      <div class="form-group">
+        <label>数据类型</label>
+        <select id="filterType" onchange="toggleChart()">
+          <option value="assess">选址评估记录</option>
+          <option value="env">环境培育数据</option>
+          <option value="crust">结皮生长数据</option>
+          <option value="soil">土壤养分数据</option>
+        </select>
+      </div>
+      <div class="form-group" style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" onclick="queryData()">查询</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 趋势图 -->
+  <div class="card" id="chartCard" style="display:none">
+    <div class="card-title">趋势图</div>
+    <div class="chart-container">
+      <canvas id="trendChart" style="max-height:350px"></canvas>
+    </div>
+  </div>
+
+  <!-- 数据表格 -->
+  <div class="card">
+    <div class="card-title">数据列表</div>
+    <div class="table-wrap">
+      <table>
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody">
+          <tr><td colspan="10"><div class="empty">请选择筛选条件后点击"查询"</div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="js/utils.js"></script>
+<script>
+let trendChart = null;
+
+function toggleChart() {
+  const type = document.getElementById('filterType').value;
+  document.getElementById('chartCard').style.display = (type !== 'assess') ? 'block' : 'none';
+}
+
+async function loadProjectsForHistory() {
+  try {
+    const projects = await loadProjects();
+    const sel = document.getElementById('filterProject');
+    projects.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  } catch (e) {}
+}
+
+function buildAssessTable(data) {
+  const thead = document.getElementById('tableHead');
+  const tbody = document.getElementById('tableBody');
+
+  thead.innerHTML = '<tr><th>项目</th><th>降水量</th><th>气温</th><th>降水变异</th><th>全氮</th><th>全磷</th><th>砾石</th><th>海拔</th><th>结果</th><th>时间</th></tr>';
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty">暂无数据</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(a =>
+    '<tr>' +
+    '<td>' + (a.project_name || '-') + '</td>' +
+    '<td>' + valOrDash(a.annual_precip) + '</td>' +
+    '<td>' + valOrDash(a.annual_temp) + '</td>' +
+    '<td>' + valOrDash(a.precip_seasonality) + '</td>' +
+    '<td>' + valOrDash(a.soil_total_n) + '</td>' +
+    '<td>' + valOrDash(a.soil_total_p) + '</td>' +
+    '<td>' + valOrDash(a.gravel_content) + '</td>' +
+    '<td>' + valOrDash(a.elevation) + '</td>' +
+    '<td>' + getTagHtml(a.result) + '</td>' +
+    '<td>' + formatDate(a.created_at) + '</td>' +
+    '</tr>'
+  ).join('');
+}
+
+function buildMonitorTable(data, type) {
+  const thead = document.getElementById('tableHead');
+  const tbody = document.getElementById('tableBody');
+  const cols = {
+    env: ['温度(C)','光照(Lx)','光照时长(h)','含水(%)','补水(L)','湿度(%RH)','营养(次/周)','天数','时间'],
+    crust: ['盖度(%)','厚度(mm)','Chl-a','抗压(kg/cm2)','风蚀率','粗糙度','颜色','时间'],
+    soil: ['有机质','全氮','全磷','全钾','pH','细物质(%)','时间']
+  };
+  const keys = {
+    env: ['temp','light_intensity','light_hours','soil_water','water_amount','humidity','nutrient_freq','period_days'],
+    crust: ['coverage','thickness','chl_a','compressive_strength','wind_erosion_rate','roughness','crust_color'],
+    soil: ['organic_matter','total_n','total_p','total_k','ph','fine_matter']
+  };
+
+  const headers = cols[type] || [];
+  const fields = keys[type] || [];
+
+  thead.innerHTML = '<tr>' + headers.map(h => '<th>' + h + '</th>').join('') + '</tr>';
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="' + headers.length + '"><div class="empty">暂无数据</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(r =>
+    '<tr>' + fields.map(f => '<td>' + valOrDash(r[f]) + '</td>').join('') +
+    '<td>' + formatDate(r.created_at) + '</td></tr>'
+  ).join('');
+
+  // 渲染趋势图
+  renderTrendChart(data, fields, type);
+}
+
+function renderTrendChart(data, fields, type) {
+  const ctx = document.getElementById('trendChart');
+  if (!ctx) return;
+  if (trendChart) trendChart.destroy();
+
+  const labels = data.map((_, i) => '#' + (i + 1));
+  const labelMap = {
+    env: { temp: '温度(C)', light_intensity: '光照(Lx)', soil_water: '含水量(%)' },
+    crust: { thickness: '厚度(mm)', chl_a: 'Chl-a', compressive_strength: '抗压(kg/cm2)' },
+    soil: { organic_matter: '有机质(g/kg)', total_n: '全氮(g/kg)', ph: 'pH' }
+  };
+  const colors = ['#1A73E8','#2E8B57','#E37400'];
+
+  const datasets = [];
+  const displayFields = Object.keys(labelMap[type] || {});
+  displayFields.forEach((f, i) => {
+    const values = data.map(r => r[f]).filter(v => v !== null && v !== undefined);
+    if (values.length > 0) {
+      datasets.push({
+        label: labelMap[type][f],
+        data: data.map(r => r[f] || null),
+        borderColor: colors[i],
+        backgroundColor: 'transparent',
+        tension: 0.3
+      });
+    }
+  });
+
+  if (datasets.length > 0) {
+    trendChart = new Chart(ctx, {
+      type: 'line',
+      data: { labels: data.map((_, i) => '#' + (i + 1)), datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } }
+      }
+    });
+  }
+}
+
+async function queryData() {
+  const projectId = document.getElementById('filterProject').value;
+  const type = document.getElementById('filterType').value;
+
+  try {
+    if (type === 'assess') {
+      const r = await apiGet('/projects/assess' + (projectId ? '?project_id=' + projectId : ''));
+      buildAssessTable(r.data || []);
+    } else {
+      const r = await apiGet('/monitor?project_id=' + (projectId || '') + '&module=' + type);
+      buildMonitorTable(r.data || [], type);
+    }
+  } catch (e) {}
+}
+
+loadProjectsForHistory();
+</script>
+
+</body>
+</html>

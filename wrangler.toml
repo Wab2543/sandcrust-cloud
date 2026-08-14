@@ -1,0 +1,12 @@
+name = "sandcrust-cloud"
+main = "src/worker.js"
+compatibility_date = "2025-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sandcrust-db"
+database_id = "2e2c44b6-3dbe-493a-81fa-7bcd8432b114"
+
+[assets]
+directory = "./public"
